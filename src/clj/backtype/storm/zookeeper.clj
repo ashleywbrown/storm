@@ -6,7 +6,7 @@
             ZooDefs ZooDefs$Ids CreateMode WatchedEvent Watcher$Event Watcher$Event$KeeperState
             Watcher$Event$EventType KeeperException$NodeExistsException])
   (:import [org.apache.zookeeper.data Stat])
-  (:import [org.apache.zookeeper.server ZooKeeperServer NIOServerCnxn$Factory])
+  (:import [org.apache.zookeeper.server ZooKeeperServer NIOServerCnxnFactory])
   (:import [java.net InetSocketAddress])
   (:import [java.io File])
   (:use [backtype.storm util log config]))
@@ -135,7 +135,7 @@
   (log-message "Starting inprocess zookeeper at port " port " and dir " localdir)
   (let [localfile (File. localdir)
         zk (ZooKeeperServer. localfile localfile 2000)
-        factory (NIOServerCnxn$Factory. (InetSocketAddress. port))]
+        factory (NIOServerCnxnFactory/createFactory port 60)] ;; 60 is the default number of client connections
     (.startup factory zk)
     factory
     ))
